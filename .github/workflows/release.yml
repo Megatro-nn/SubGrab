@@ -83,6 +83,22 @@ jobs:
         if: env.SIGN_PFX_BASE64 != ''
         shell: pwsh
         run: '& $env:SIGNTOOL sign /f "$env:RUNNER_TEMP\cert.pfx" /p $env:SIGN_PFX_PASSWORD /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 installer\SubGrab-Setup.exe'
+      - name: Installer test (install silently, start the installed app, uninstall)
+        shell: pwsh
+        env:
+          QT_QPA_PLATFORM: offscreen
+          SUBGRAB_SELFTEST_OUT: ${{ runner.temp }}\installed-selftest.txt
+        run: |
+          $dir = Join-Path $env:RUNNER_TEMP "SubGrabInstalled"
+          $i = Start-Process -FilePath "installer\SubGrab-Setup.exe" -ArgumentList "/VERYSILENT","/SUPPRESSMSGBOXES","/NORESTART","/DIR=$dir" -PassThru -Wait
+          if ($i.ExitCode -ne 0) { Write-Error "installer failed"; exit 1 }
+          if (-not (Test-Path "$dir\SubGrab.exe")) { Write-Error "installed app missing"; exit 1 }
+          $p = Start-Process -FilePath "$dir\SubGrab.exe" -PassThru
+          if (-not $p.WaitForExit(90000)) { $p.Kill(); Write-Error "installed app did not start"; exit 1 }
+          if ((Get-Content $env:SUBGRAB_SELFTEST_OUT -TotalCount 1) -ne "ok") { Write-Error "installed app window did not load"; exit 1 }
+          $u = Get-ChildItem $dir -Filter "unins*.exe" | Select-Object -First 1
+          Start-Process -FilePath $u.FullName -ArgumentList "/VERYSILENT","/SUPPRESSMSGBOXES" -Wait
+          if (Test-Path "$dir\SubGrab.exe") { Write-Error "uninstall left the app behind"; exit 1 }
       - name: Portable zip + checksums
         shell: pwsh
         run: |
@@ -106,7 +122,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           prerelease: ${{ contains(github.ref_name, '-') }}
-          generate_release_notes: true
+          body_path: RELEASE_NOTES.md
           files: |
             SubGrab-Setup.exe
             SubGrab-portable.zip
@@ -166,6 +182,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           prerelease: ${{ contains(github.ref_name, '-') }}
+          body_path: RELEASE_NOTES.md
           files: |
             SubGrab-macOS.zip
             SubGrab-macOS.dmg
@@ -220,6 +237,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           prerelease: ${{ contains(github.ref_name, '-') }}
+          body_path: RELEASE_NOTES.md
           files: |
             SubGrab-linux.tar.gz
             SubGrab-x86_64.AppImage
