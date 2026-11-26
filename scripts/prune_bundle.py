@@ -82,6 +82,11 @@ def main(root):
         if os.path.isdir(translations):
             shutil.rmtree(translations)
             removed += 1
+    for dirpath, dirnames, _ in os.walk(root):
+        if "translations" in dirnames and os.path.basename(dirpath) == "PySide6":
+            shutil.rmtree(os.path.join(dirpath, "translations"))
+            removed += 1
+            break
     print(f"pruned {removed} unused Qt files/dirs from {root}")
 
 
