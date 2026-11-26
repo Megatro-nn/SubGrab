@@ -20,7 +20,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python -m pip install --upgrade pip pyinstaller pillow pyside6
+      - run: python -m pip install --upgrade pip pillow pyside6
+      - name: Build PyInstaller from source (own bootloader)
+        shell: pwsh
+        run: |
+          python -m pip install --no-binary pyinstaller pyinstaller
+          if ($LASTEXITCODE -ne 0) { python -m pip install --force-reinstall pyinstaller }
+          $global:LASTEXITCODE = 0
       - name: Tests
         run: python -m unittest discover -s tests
       - name: Bundle 7-Zip (preinstalled on the runner)
@@ -92,7 +98,6 @@ jobs:
           generate_release_notes: true
           files: |
             SubGrab-Setup.exe
-            SubGrab.exe
             SubGrab-portable.zip
             SHA256SUMS.txt
 
@@ -120,17 +125,21 @@ jobs:
           subgrab.py
       - name: Prune unused Qt modules
         run: python scripts/prune_bundle.py dist
-      - name: Zip app + checksum
+      - name: Ad-hoc sign the app
         run: |
-          cd dist
-          zip -q -r ../SubGrab-macOS.zip SubGrab.app
-          cd ..
-          shasum -a 256 SubGrab-macOS.zip | tee SHA256SUMS-macOS.txt
+          codesign --force --deep --sign - dist/SubGrab.app
+          codesign --verify --deep --verbose=2 dist/SubGrab.app
+      - name: Zip, DMG and checksums
+        run: |
+          ditto -c -k --keepParent dist/SubGrab.app SubGrab-macOS.zip
+          hdiutil create -volname "SubGrab" -srcfolder dist/SubGrab.app -ov -format UDZO SubGrab-macOS.dmg
+          shasum -a 256 SubGrab-macOS.zip SubGrab-macOS.dmg | tee SHA256SUMS-macOS.txt
       - uses: actions/upload-artifact@v4
         with:
           name: SubGrab-macos
           path: |
             SubGrab-macOS.zip
+            SubGrab-macOS.dmg
             SHA256SUMS-macOS.txt
       - name: Publish release
         if: startsWith(github.ref, 'refs/tags/v')
@@ -138,6 +147,7 @@ jobs:
         with:
           files: |
             SubGrab-macOS.zip
+            SubGrab-macOS.dmg
             SHA256SUMS-macOS.txt
 
   build-linux:
@@ -166,15 +176,14 @@ jobs:
           subgrab.py
       - name: Prune unused Qt modules
         run: python scripts/prune_bundle.py dist/SubGrab
-      - name: Tar binary + checksum
-        run: |
-          tar -C dist -czf SubGrab-linux.tar.gz SubGrab
-          sha256sum SubGrab-linux.tar.gz | tee SHA256SUMS-linux.txt
+      - name: Package (AppImage and tar.gz)
+        run: bash packaging/make_linux.sh SubGrab subgrab assets/logo.png
       - uses: actions/upload-artifact@v4
         with:
           name: SubGrab-linux
           path: |
             SubGrab-linux.tar.gz
+            SubGrab-x86_64.AppImage
             SHA256SUMS-linux.txt
       - name: Publish release
         if: startsWith(github.ref, 'refs/tags/v')
@@ -182,4 +191,5 @@ jobs:
         with:
           files: |
             SubGrab-linux.tar.gz
+            SubGrab-x86_64.AppImage
             SHA256SUMS-linux.txt

@@ -22,7 +22,18 @@ Grab the latest from **[Releases](../../releases/latest)**:
 |------|-------------|
 | `SubGrab-Setup.exe` | You want a normal installer (Start menu, optional folder right-click menu, uninstaller). |
 | `SubGrab-portable.zip` | No install: unzip, keep the `SubGrab` folder together, run `SubGrab.exe` inside it. |
-| `SHA256SUMS.txt` | Verify your download. |
+| `SubGrab-macOS.dmg` / `SubGrab-macOS.zip` | macOS app (ad-hoc signed). |
+| `SubGrab-x86_64.AppImage` / `SubGrab-linux.tar.gz` | Linux. |
+| `SHA256SUMS*.txt` | Verify your download. |
+
+### Opening the app the first time
+
+The builds are not signed with a paid certificate, so your system may show a warning. The files are the same ones built in public by GitHub Actions; compare the SHA256 in `SHA256SUMS` with your download.
+
+- **Windows**: if SmartScreen says "Windows protected your PC", click More info, then Run anyway. The installer and portable folder are normal unpacked builds (no UPX packing, full version info).
+- **macOS** (including Sequoia): the app is ad-hoc signed. If macOS blocks it, open System Settings, then Privacy and Security, scroll down to the message about SubGrab and click Open Anyway, then confirm. On older versions, right-click the app and choose Open.
+- **Linux**: use `SubGrab-x86_64.AppImage` (run `chmod +x` on it once, then double-click) or unpack `SubGrab-linux.tar.gz`, which includes a `.desktop` file.
+
 
 > Windows SmartScreen may warn about unsigned builds until the app builds reputation - see [Code signing](#code-signing).
 
