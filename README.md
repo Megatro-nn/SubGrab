@@ -3,15 +3,17 @@
 <p align="center">
   <a href="https://github.com/Megatro-nn/SubGrab/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Megatro-nn/SubGrab/actions/workflows/ci.yml/badge.svg"></a>
   <a href="https://github.com/Megatro-nn/SubGrab/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/Megatro-nn/SubGrab"></a>
-  <img alt="Platform" src="https://img.shields.io/badge/platform-Windows-0078D6">
+  <img alt="Platform" src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-0078D6">
   <img alt="License" src="https://img.shields.io/badge/license-GPL--3.0-blue">
 </p>
 <p align="center">
   <a href="https://ko-fi.com/megatronazx"><img alt="Support on Ko-fi" height="52" src="https://img.shields.io/badge/Support%20me%20on%20Ko--fi-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white"></a>
 </p>
 
-**SubGrab** finds, fixes and saves subtitles for every video in a folder - or lets you search by name / IMDb id
-like HandySub did. Modern Qt interface, pure Python, no other runtime dependencies.
+**SubGrab** is a free subtitle downloader for Windows, macOS and Linux. It finds, fixes and saves subtitles (SRT) for every
+movie and TV series in a folder - or lets you search by name / IMDb id. It pulls from OpenSubtitles, SubSource and Subf2m,
+converts subtitles to UTF-8 SRT, removes ads, and renames video files to clean names. Modern Qt Quick (QML / PySide6)
+interface with dark and light themes, written in Python.
 
 ## Download
 Grab the latest from **[Releases](../../releases/latest)**:
