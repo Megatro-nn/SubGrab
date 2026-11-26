@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+build/
+dist/
+installer/
+*.spec
+data/
+portable.txt
+.venv/
+venv/
+.idea/
+.vscode/
+*.log
+# 7-Zip binaries are copied in at build time, never committed
+packaging/7zip/*.exe
+packaging/7zip/*.dll
+# signing material - never commit
+*.pfx
+*.p12

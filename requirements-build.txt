@@ -1,0 +1,5 @@
+# needed to build the Windows exe (the app itself runs on plain Python 3.9+)
+pyinstaller
+pillow
+keyring
+PySide6
