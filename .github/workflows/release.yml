@@ -78,7 +78,7 @@ jobs:
           Copy-Item installer\SubGrab-Setup.exe .
           Get-FileHash SubGrab-Setup.exe, SubGrab-portable.zip -Algorithm SHA256 |
             ForEach-Object { "$($_.Hash.ToLower())  $(Split-Path $_.Path -Leaf)" } | Set-Content SHA256SUMS.txt
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: SubGrab-windows
           path: |
@@ -126,7 +126,7 @@ jobs:
           zip -q -r ../SubGrab-macOS.zip SubGrab.app
           cd ..
           shasum -a 256 SubGrab-macOS.zip | tee SHA256SUMS-macOS.txt
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: SubGrab-macos
           path: |
@@ -170,7 +170,7 @@ jobs:
         run: |
           tar -C dist -czf SubGrab-linux.tar.gz SubGrab
           sha256sum SubGrab-linux.tar.gz | tee SHA256SUMS-linux.txt
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: SubGrab-linux
           path: |
