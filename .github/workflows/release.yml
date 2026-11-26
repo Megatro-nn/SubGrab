@@ -146,7 +146,7 @@ jobs:
           SUBGRAB_SELFTEST_OUT: /tmp/selftest.txt
         run: |
           rm -f /tmp/selftest.txt
-          timeout 90 dist/SubGrab.app/Contents/MacOS/SubGrab || true
+          dist/SubGrab.app/Contents/MacOS/SubGrab || true
           cat /tmp/selftest.txt || { echo "no self-test output, app crashed on start"; exit 1; }
           head -1 /tmp/selftest.txt | grep -qx ok
       - name: Zip, DMG and checksums
