@@ -1,0 +1,32 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        python: ["3.9", "3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install PySide6
+        if: matrix.python == '3.12'
+      - run: python -m unittest discover -s tests -v
+        env:
+          QT_QPA_PLATFORM: offscreen
+
+  windows-import:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m py_compile subgrab.py subgrab_tk.py subgrab_qt.py subgrab_core.py subgrab_i18n.py
+      - run: python -m unittest discover -s tests
