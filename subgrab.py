@@ -22,6 +22,7 @@ All logic lives in subgrab_core.py.
     pip install PySide6   ->  python subgrab.py   (QML UI)
     python subgrab.py     ->  Tk UI (no dependencies)
 """
+import os
 import sys
 
 
@@ -32,7 +33,7 @@ def main():
         qml_main = None
     if qml_main is not None:
         rc = qml_main() or 0
-        if rc != 2:  # 2 = QML failed to load; fall back to widgets
+        if rc != 2 or os.environ.get('SUBGRAB_SELFTEST_OUT'):  # 2 = QML failed to load; fall back to widgets
             sys.exit(rc)
     try:
         from subgrab_qt import main as qt_main

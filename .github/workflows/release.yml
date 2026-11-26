@@ -58,6 +58,16 @@ jobs:
         if: env.SIGN_PFX_BASE64 != ''
         shell: pwsh
         run: '& $env:SIGNTOOL sign /f "$env:RUNNER_TEMP\cert.pfx" /p $env:SIGN_PFX_PASSWORD /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 dist\SubGrab\SubGrab.exe'
+      - name: Smoke test (the built app must open its window)
+        shell: pwsh
+        env:
+          QT_QPA_PLATFORM: offscreen
+          SUBGRAB_SELFTEST_OUT: ${{ runner.temp }}\selftest.txt
+        run: |
+          $p = Start-Process -FilePath "dist\SubGrab\SubGrab.exe" -PassThru
+          if (-not $p.WaitForExit(90000)) { $p.Kill(); Write-Error "app did not finish starting"; exit 1 }
+          if (Test-Path $env:SUBGRAB_SELFTEST_OUT) { Get-Content $env:SUBGRAB_SELFTEST_OUT } else { Write-Error "no self-test output, app crashed on start"; exit 1 }
+          if ((Get-Content $env:SUBGRAB_SELFTEST_OUT -TotalCount 1) -ne "ok") { exit 1 }
       - name: Version
         id: ver
         shell: pwsh
@@ -130,6 +140,15 @@ jobs:
         run: |
           codesign --force --deep --sign - dist/SubGrab.app
           codesign --verify --deep --verbose=2 dist/SubGrab.app
+      - name: Smoke test (the built app must open its window)
+        env:
+          QT_QPA_PLATFORM: offscreen
+          SUBGRAB_SELFTEST_OUT: /tmp/selftest.txt
+        run: |
+          rm -f /tmp/selftest.txt
+          timeout 90 dist/SubGrab.app/Contents/MacOS/SubGrab || true
+          cat /tmp/selftest.txt || { echo "no self-test output, app crashed on start"; exit 1; }
+          head -1 /tmp/selftest.txt | grep -qx ok
       - name: Zip, DMG and checksums
         run: |
           ditto -c -k --keepParent dist/SubGrab.app SubGrab-macOS.zip
@@ -178,6 +197,15 @@ jobs:
           subgrab.py
       - name: Prune unused Qt modules
         run: python scripts/prune_bundle.py dist/SubGrab
+      - name: Smoke test (the built app must open its window)
+        env:
+          QT_QPA_PLATFORM: offscreen
+          SUBGRAB_SELFTEST_OUT: /tmp/selftest.txt
+        run: |
+          rm -f /tmp/selftest.txt
+          timeout 90 dist/SubGrab/SubGrab || true
+          cat /tmp/selftest.txt || { echo "no self-test output, app crashed on start"; exit 1; }
+          head -1 /tmp/selftest.txt | grep -qx ok
       - name: Package (AppImage and tar.gz)
         run: bash packaging/make_linux.sh SubGrab subgrab assets/logo.png
       - uses: actions/upload-artifact@v4

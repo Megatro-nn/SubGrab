@@ -36,7 +36,7 @@ _BASE = [
     "Sensors", "SerialPort", "SerialBus", "RemoteObjects", "Scxml",
     "VirtualKeyboard", "Designer", "Help", "Test", "Sql", "Graphs",
     "ShaderTools", "SpatialAudio", "WebSockets", "HttpServer",
-    "QuickDialogs2", "Labs",
+    "Labs",
 ]
 LIB_PREFIXES = [p + b for p in ("Qt6", "Qt", "libQt6", "libQt") for b in _BASE]
 
@@ -60,6 +60,10 @@ def main(root):
                 dirnames.remove(d)
                 removed += 1
         for f in filenames:
+            if f.lower() in ("opengl32sw.dll",) or f.lower().endswith(".pdb"):
+                os.remove(os.path.join(dirpath, f))
+                removed += 1
+                continue
             if f.startswith(tuple(LIB_PREFIXES)):
                 os.remove(os.path.join(dirpath, f))
                 removed += 1

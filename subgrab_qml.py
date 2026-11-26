@@ -978,8 +978,18 @@ def main(cfg=None):
     engine.rootContext().setContextProperty("subsModel", bridge.subs)
     engine.rootContext().setContextProperty("sourcesModel", bridge.sources)
     engine.addImportPath(_qml_dir())
+    selftest = os.environ.get("SUBGRAB_SELFTEST_OUT")
+    msgs = []
+    if selftest:
+        from PySide6.QtCore import qInstallMessageHandler
+        qInstallMessageHandler(lambda mode, ctx, msg: msgs.append(msg))
     engine.load(QUrl.fromLocalFile(os.path.join(_qml_dir(), "Main.qml")))
-    if not engine.rootObjects():
+    ok = bool(engine.rootObjects())
+    if selftest:
+        with open(selftest, "w", encoding="utf-8") as f:
+            f.write(("ok" if ok else "FAILED") + "\n" + "\n".join(msgs[:40]))
+        return 0 if ok else 3
+    if not ok:
         dlog("QML failed to load")
         return 2
     return app.exec()
