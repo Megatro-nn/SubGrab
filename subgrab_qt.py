@@ -48,7 +48,7 @@ except Exception:  # pragma: no cover
     LOGO_PNG_B64 = ""
 
 # --------------------------------------------------------------------- theme
-# Colors follow tinyMediaManager's FlatLaf themes (TmmDarkLaf/TmmLightLaf).
+# Dark and light color themes.
 LIGHT = dict(bg="#EBEBEB", panel="#FFFFFF", fg="#26282A", muted="#61666B", accent="#558EEF", accent2="#4083C9",
              hover="#DDDDDD", border="#C4C4C4", entry="#FFFFFF", head="#EBEBEB",
              select="#C5CFD5", selfg="#000000", ok="#1E8E00", warn="#B26A00", bad="#CC0202",
@@ -90,7 +90,7 @@ def qss():
     return f"""
     QMainWindow, QDialog {{ background: {P['bg']}; }}
     QWidget {{ color: {P['fg']}; font-family: "Segoe UI"; font-size: 13px; }}
-    /* ---- top toolbar (tinyMM style: dark in both themes) ---- */
+    /* ---- top toolbar (dark in both themes) ---- */
     #toolbar {{ background: {P['toolbar']}; border-bottom: 1px solid {P['toolbar_sep']}; }}
     #tb_title {{ color: {P["tb_fg"]}; font-size: 15px; font-weight: bold; }}
     #tb_tag {{ color: {P["tb_dim"]}; font-size: 10px; }}
@@ -1540,7 +1540,7 @@ class App(QMainWindow):
         rootv.setSpacing(0)
         self.setCentralWidget(root)
 
-        # ---- top toolbar (tinyMM style)
+        # ---- top toolbar
         tb = QFrame()
         tb.setObjectName("toolbar")
         tb.setFixedHeight(64)

@@ -579,7 +579,7 @@ ApplicationWindow {
                            color: cp.muted; font.pixelSize: 12 }
                 }
                 Card {
-                    width: parent.width; height: 200
+                    width: parent.width; height: 236
                     Text { x: 16; y: 12; text: "About"; color: cp.muted; font.pixelSize: 11; font.weight: Font.DemiBold }
                     Image { x: 16; y: 36; source: win.logoImg; sourceSize.width: 56; sourceSize.height: 56 }
                     Text { x: 86; y: 40; text: bridge.appInfo().name + " " + bridge.appInfo().version; color: cp.fg; font.pixelSize: 18; font.weight: Font.DemiBold }
@@ -589,15 +589,12 @@ ApplicationWindow {
                     MButton { x: 16; y: 116; txt: "Check for updates"; onClicked: bridge.checkUpdates() }
                     MButton { x: 170; y: 116; txt: "Open debug log"; onClicked: bridge.openDataPath("log") }
                     MButton { x: 320; y: 116; txt: "Open data folder"; onClicked: bridge.openDataPath("data") }
-                }
-                Card {
-                    width: parent.width; height: 96
-                    Text { x: 16; y: 12; text: "Coming soon"; color: cp.muted; font.pixelSize: 11; font.weight: Font.DemiBold }
-                    Text { x: 16; y: 36; width: parent.width - 260
-                           text: "Giant Media Manager - our next app: a media manager like tinyMediaManager. Organize your library, fetch metadata and posters, and keep file names clean - from the same team. Stay tuned."
+                    Rectangle { x: 16; y: 164; width: parent.width - 32; height: 1; color: cp.cardBorder }
+                    Text { x: 16; y: 180; width: parent.width - 270
+                           text: "Also by us: Giant Media Manager. Organize your library, fetch metadata and posters, and keep file names clean."
                            color: cp.fg; font.pixelSize: 13; wrapMode: Text.Wrap }
-                    MButton { anchors.right: parent.right; anchors.rightMargin: 16; anchors.verticalCenter: parent.verticalCenter
-                              txt: "Giant Media Manager page"; onClicked: bridge.openUrl("https://github.com/Megatro-nn/Giant-Media-Manager") }
+                    MButton { x: parent.width - width - 16; y: 180; txt: "Giant Media Manager page"
+                              onClicked: bridge.openUrl("https://github.com/Megatro-nn/Giant-Media-Manager") }
                 }
                 Row {
                     spacing: 12; height: 46
