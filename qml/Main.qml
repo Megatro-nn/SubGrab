@@ -589,6 +589,7 @@ ApplicationWindow {
                     MButton { x: 16; y: 116; txt: "Check for updates"; onClicked: bridge.checkUpdates() }
                     MButton { x: 170; y: 116; txt: "Open debug log"; onClicked: bridge.openDataPath("log") }
                     MButton { x: 320; y: 116; txt: "Open data folder"; onClicked: bridge.openDataPath("data") }
+                    MButton { x: parent.width - width - 16; y: 116; txt: "Support me on Ko-fi"; primary: true; onClicked: bridge.openUrl("https://ko-fi.com/megatronazx") }
                     Rectangle { x: 16; y: 164; width: parent.width - 32; height: 1; color: cp.cardBorder }
                     Text { x: 16; y: 180; width: parent.width - 270
                            text: "Also by us: Giant Media Manager. Organize your library, fetch metadata and posters, and keep file names clean."
